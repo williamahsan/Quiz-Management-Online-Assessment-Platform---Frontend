@@ -7,7 +7,7 @@ const links = [
   { to: "/admin/quizzes", label: "Quizzes" }, 
   { to: "/admin/categories", label: "Categories" }, 
   { to: "/admin/questions", label: "Questions" },
-  { to: "/leaderboard", label: "Leaderboard" }, 
+  { to: "/admin/leaderboard", label: "Leaderboard" }, 
 ];
 
 export default function Sidebar({ isOpen, setIsOpen }) {

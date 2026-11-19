@@ -4,7 +4,7 @@ const links = [
   { to: "/student/dashboard", label: "Dashboard" },
   { to: "/student/quizzes", label: "Quizzes" }, 
    { to: "/student/history", label: "Attempt History" }, 
-  { to: "/leaderboard", label: "Leaderboard" }, 
+  { to: "/student/leaderboard", label: "Leaderboard" }, 
 ];
 
 export default function Sidebar() {

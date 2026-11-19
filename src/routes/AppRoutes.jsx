@@ -29,7 +29,7 @@ import ResultDetails from "../pages/student/ResultDetails.jsx";
 import StudentDashboard from "../pages/student/StudentDashboard.jsx";
 import StudentLayout from "../layouts/StudentLayout.jsx";
 
-import Leaderboard from "../pages/student/Leaderboard.jsx"
+import Leaderboard from "../pages/shared/Leaderboard.jsx"
 
 const AppRoutes = () => {
   return (
@@ -56,6 +56,7 @@ const AppRoutes = () => {
           <AdminLayout />
         </ProtectedRoute>}
       >
+        <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="analytics" element={<AdminAnalytics />} />
@@ -70,25 +71,27 @@ const AppRoutes = () => {
 
         <Route path="questions" element={<QuestionManagement />} />
         <Route path="quizzes/:quizId/questions" element={<QuestionManagement />} />
-      </Route>
 
+        <Route path="leaderboard" element={<Leaderboard />} />
+      </Route>
 
       {/**Student routes */}
       <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT']}>
         <StudentLayout />
       </ProtectedRoute>}
       >
+        <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="quizzes/:id" element={<QuizDetails />} />
         <Route path="quizzes" element={<QuizDiscovery />} />
         <Route path="quizzes/:id/attempt/:attemptId" element={<ActiveQuiz />} />
         <Route path="history" element={<AttemptHistory />} />
         <Route path="results/:id" element={<ResultDetails />} />
         <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="leaderboard" element={<Leaderboard />} />
       </Route>
 
-      <Route path="/leaderboard" element={<Leaderboard />} />
-
       <Route path="/unauthorized" element={<h1>403 - Access Denied</h1>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
 
   );
