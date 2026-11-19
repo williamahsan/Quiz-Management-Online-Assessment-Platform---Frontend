@@ -1,22 +1,13 @@
 import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const token = localStorage.getItem('token');
-  const userString = localStorage.getItem('user');
+  const { user, loading } = useAuth();
 
-  if (!token) return <Navigate to="/" replace />;
+  if (loading) return null;
+  if (!user) return <Navigate to="/" replace />;
 
-  let role = null;
-  if (userString) {
-    try {
-      const userObj = JSON.parse(userString);
-      role = userObj.role;
-    } catch (error) {
-      console.error("Failed to parse user from local storage:", error);
-    }
-  }
-
-  if (allowedRoles && !allowedRoles.includes(role)) {
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

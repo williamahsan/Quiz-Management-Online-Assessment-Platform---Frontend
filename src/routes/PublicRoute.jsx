@@ -1,16 +1,11 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth, getDashboardPath } from '../context/AuthContext.jsx';
 
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) return null;
-
-  if (user) {
-    const redirectPath =
-      user.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard';
-    return <Navigate to={redirectPath} replace />;
-  }
+  if (user) return <Navigate to={getDashboardPath(user.role)} replace />;
 
   return children;
 };

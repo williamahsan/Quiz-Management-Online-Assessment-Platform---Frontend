@@ -2,17 +2,27 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
+export const getDashboardPath = (role) =>
+  role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard';
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
+    try {
+      const storedUser = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+      if (storedUser && token) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (error) {
+      console.error('Corrupted auth data in localStorage:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const login = (userData, token) => {
@@ -34,4 +44,10 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
