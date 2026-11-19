@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute.jsx';
+import PublicRoute from './PublicRoute.jsx';
 
 import Register from '../pages/auth/Register.jsx';
 import Login from '../pages/auth/Login.jsx';
@@ -33,10 +34,21 @@ import Leaderboard from "../pages/student/Leaderboard.jsx"
 const AppRoutes = () => {
   return (
     <Routes>
-      {/**Public routes */}
-      <Route path="/register" element={<Register />} />
-      <Route path="/" element={<Login />} />
-
+      {/** Public routes */}
+      <Route
+        path="/register" element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
 
       {/**Admin routes */}
       <Route path="/admin" element={
@@ -46,37 +58,37 @@ const AppRoutes = () => {
       >
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<UserManagement />} />
-        <Route path="analytics" element = {<AdminAnalytics />}/>
+        <Route path="analytics" element={<AdminAnalytics />} />
 
         <Route path="quizzes" element={<QuizList />} />
         <Route path="quizzes/create" element={<QuizForm />} />
-        <Route path="quizzes/edit/:id" element={<QuizFormWrapper />} /> 
+        <Route path="quizzes/edit/:id" element={<QuizFormWrapper />} />
 
-        <Route path="categories" element = {<CategoryManagement/>}/>
-         <Route path="categories/create" element = {<CategoryForm/>}/>
+        <Route path="categories" element={<CategoryManagement />} />
+        <Route path="categories/create" element={<CategoryForm />} />
         <Route path="categories/edit/:id" element={<CategoryFormWrapper />} />
 
-        <Route path="questions" element = {<QuestionManagement/>}/>
+        <Route path="questions" element={<QuestionManagement />} />
         <Route path="quizzes/:quizId/questions" element={<QuestionManagement />} />
-       </Route>
+      </Route>
 
 
-        {/**Student routes */}
-      <Route path="/student" element={ <ProtectedRoute allowedRoles={['STUDENT']}>
-          <StudentLayout />
-        </ProtectedRoute>}      
-     >
-     <Route path="quizzes/:id" element={<QuizDetails />} />
-     <Route path="quizzes" element={<QuizDiscovery />} />
-     <Route path="quizzes/:id/attempt/:attemptId" element={<ActiveQuiz />} />
-     <Route path="history" element={<AttemptHistory />} />
-     <Route path="results/:id" element={<ResultDetails />} />
-     <Route path="dashboard" element={<StudentDashboard />} />
-     </Route>
+      {/**Student routes */}
+      <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT']}>
+        <StudentLayout />
+      </ProtectedRoute>}
+      >
+        <Route path="quizzes/:id" element={<QuizDetails />} />
+        <Route path="quizzes" element={<QuizDiscovery />} />
+        <Route path="quizzes/:id/attempt/:attemptId" element={<ActiveQuiz />} />
+        <Route path="history" element={<AttemptHistory />} />
+        <Route path="results/:id" element={<ResultDetails />} />
+        <Route path="dashboard" element={<StudentDashboard />} />
+      </Route>
 
-     <Route path="/leaderboard" element={<Leaderboard/> } />
-     
-    <Route path="/unauthorized" element={<h1>403 - Access Denied</h1>} />
+      <Route path="/leaderboard" element={<Leaderboard />} />
+
+      <Route path="/unauthorized" element={<h1>403 - Access Denied</h1>} />
     </Routes>
 
   );
