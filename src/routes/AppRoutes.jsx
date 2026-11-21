@@ -20,6 +20,8 @@ import CategoryForm from "../pages/admin/CategoryForm.jsx";
 import CategoryFormWrapper from '../pages/admin/CategoryFormWrapper.jsx';
 
 import QuestionManagement from "../pages/admin/QuestionManagement.jsx";
+import QuestionForm from "../pages/admin/QuestionForm.jsx";
+import QuestionFormWrapper from "../pages/admin/QuestionFormWrapper.jsx";
 
 import QuizDetails from "../pages/student/QuizDetails.jsx";
 import QuizDiscovery from "../pages/student/QuizDiscovery.jsx";
@@ -70,7 +72,11 @@ const AppRoutes = () => {
         <Route path="categories/edit/:id" element={<CategoryFormWrapper />} />
 
         <Route path="questions" element={<QuestionManagement />} />
+        <Route path="questions/form" element={<QuestionForm />} />
+        <Route path="questions/edit/:id" element={<QuestionFormWrapper />} />
         <Route path="quizzes/:quizId/questions" element={<QuestionManagement />} />
+        <Route path="quizzes/:quizId/questions/create" element={<QuestionForm />} />
+        <Route path="quizzes/:quizId/questions/edit/:questionId" element={<QuestionFormWrapper />} />
 
         <Route path="leaderboard" element={<Leaderboard />} />
       </Route>

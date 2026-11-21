@@ -13,6 +13,12 @@ const questionService = {
     return response.data;
   },
 
+  // Fetch a specific question by its ID
+  getQuestionById: async (id) => {
+    const response = await axios.get(`/questions/${id}`);
+    return response.data;
+  },
+
   // Update a specific question and its options
   updateQuestion: async (id, questionData) => {
     const response = await axios.put(`/questions/${id}`, questionData);
