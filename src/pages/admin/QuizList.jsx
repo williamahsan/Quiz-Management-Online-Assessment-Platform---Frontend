@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import quizService from '../../services/quizService.js'; 
+import quizService from '../../services/quizService.js';
 
 const QuizList = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   // Fetch quizzes on component mount
   useEffect(() => {
@@ -29,11 +29,11 @@ const QuizList = () => {
 
   const handleDelete = async (id) => {
     const isConfirmed = window.confirm("Are you sure you want to delete this quiz? This action cannot be undone.");
-    
+
     if (isConfirmed) {
       try {
         await quizService.deleteQuiz(id);
-        
+
         // Update the local state to remove the deleted quiz instantly 
         // without needing to refresh the page or make another GET request.
         setQuizzes(quizzes.filter((quiz) => quiz.id !== id));
@@ -50,17 +50,17 @@ const QuizList = () => {
     navigate(`/admin/quizzes/edit/${id}`);
   };
 
-  
+
   const handleTogglePublish = async (id, currentStatus) => {
     try {
       // Determine the new status
       const newStatus = currentStatus === 'PUBLISHED' ? 'UNPUBLISHED' : 'PUBLISHED';
-      
+
       // Call the PATCH API endpoint
       await quizService.updateQuizStatus(id, newStatus);
-      
+
       // Update the local state to reflect the new status in the UI instantly
-      setQuizzes(quizzes.map((quiz) => 
+      setQuizzes(quizzes.map((quiz) =>
         quiz.id === id ? { ...quiz, status: newStatus } : quiz
       ));
     } catch (err) {
@@ -69,14 +69,14 @@ const QuizList = () => {
     }
   };
 
-  if (loading) return <div className="p-6 text-center text-gray-600">Loading quizzes...</div>;
-  if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
+  // if (loading) return <div className="p-6 text-center text-gray-600">Loading quizzes...</div>;
+  // if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Quiz Management</h1>
-        <button 
+        <button
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow"
           onClick={() => navigate("/admin/quizzes/create")}
         >
@@ -97,7 +97,19 @@ const QuizList = () => {
             </tr>
           </thead>
           <tbody className="text-gray-600 text-sm font-light">
-            {quizzes.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan="6" className="py-6 text-center text-gray-500">
+                  Loading quizzes...
+                </td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan="6" className="py-6 text-center text-red-500">
+                  {error}
+                </td>
+              </tr>
+            ) : quizzes.length === 0 ? (
               <tr>
                 <td colSpan="6" className="py-6 text-center text-gray-500">
                   No quizzes found. Create your first one!
@@ -106,40 +118,39 @@ const QuizList = () => {
             ) : (
               quizzes.map((quiz) => (
                 <tr key={quiz.id} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-3 px-6 font-medium text-gray-900"><button 
-                      onClick={() => navigate(`/admin/quizzes/${quiz.id}/questions`)}
-                      className="text-black-500 hover:text-blue-700 px-2"
-                    >
+                  <td className="py-3 px-6 font-medium text-gray-900"><button
+                    onClick={() => navigate(`/admin/quizzes/${quiz.id}/questions`)}
+                    className="text-black-500 hover:text-blue-700 px-2"
+                  >
                     {quiz.title}
-                    </button></td>
+                  </button></td>
                   <td className="py-3 px-6">{quiz.categories?.name || 'N/A'}</td>
                   <td className="py-3 px-6">{quiz.difficulty}</td>
                   <td className="py-3 px-6">{quiz.duration_minutes} min</td>
                   <td className="py-3 px-6">
-                    <span className={`py-1 px-3 rounded-full text-xs font-semibold ${
-                      quiz.status === 'PUBLISHED' 
-                        ? 'bg-green-100 text-green-700' 
+                    <span className={`py-1 px-3 rounded-full text-xs font-semibold ${quiz.status === 'PUBLISHED'
+                        ? 'bg-green-100 text-green-700'
                         : quiz.status === 'DRAFT'
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-gray-200 text-gray-700'
-                    }`}>
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-gray-200 text-gray-700'
+                      }`}>
                       {quiz.status}
                     </span>
                   </td>
                   <td className="py-3 px-6 text-center flex justify-center space-x-2">
-                    <button 
+                    <button
                       onClick={() => handleEdit(quiz.id)}
                       className="text-blue-500 hover:text-blue-700 px-2"
                     >
                       Edit
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleTogglePublish(quiz.id, quiz.status)}
                       className="text-indigo-500 hover:text-indigo-700 px-2"
                     >
                       {quiz.status === 'PUBLISHED' ? 'Unpublish' : 'Publish'}
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDelete(quiz.id)}
                       className="text-red-500 hover:text-red-700 px-2"
                     >
