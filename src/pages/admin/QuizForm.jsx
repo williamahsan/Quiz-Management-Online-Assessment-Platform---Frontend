@@ -12,6 +12,7 @@ const QuizForm = ({ quizId }) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [apiError, setApiError] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
 
   const isEditMode = Boolean(quizId);
 
@@ -37,6 +38,7 @@ const QuizForm = ({ quizId }) => {
     if (isEditMode) {
       const loadQuizData = async () => {
         try {
+          setIsFetching(true);
           const quizData = await quizService.getQuizById(quizId);
           // Dynamically set form values based on fetched data
           Object.keys(quizData).forEach(key => {
@@ -45,6 +47,8 @@ const QuizForm = ({ quizId }) => {
 
         } catch (error) {
           setApiError("Failed to load quiz details.");
+        } finally {
+          setIsFetching(false);
         }
       };
       loadQuizData();
@@ -65,7 +69,6 @@ const QuizForm = ({ quizId }) => {
       reset(); // Clear the form
       navigate('/admin/quizzes'); // Trigger parent callback to close form/navigate
     } catch (error) {
-      console.error("Error saving quiz:", error);
       setApiError(error.response?.data?.error || "An error occurred while saving the quiz.");
     } finally {
       setLoading(false);
@@ -81,6 +84,7 @@ const QuizForm = ({ quizId }) => {
       {apiError && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{apiError}</div>}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <fieldset disabled={loading || isFetching} className="space-y-4 disabled:opacity-60 disabled:cursor-not-allowed transition-opacity">
         {/* Title */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Quiz Title *</label>
@@ -195,6 +199,7 @@ const QuizForm = ({ quizId }) => {
             {loading ? 'Saving...' : (isEditMode ? 'Update Quiz' : 'Create Quiz')}
           </button>
         </div>
+        </fieldset>
       </form>
     </div>
   );

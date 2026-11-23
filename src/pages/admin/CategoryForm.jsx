@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import categoryService from '../../services/categoryService.js';
 
 const CategoryForm = ({ categoryId }) => {
   const [category, setCategory] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState(null);
+  
   const navigate = useNavigate();
 
   const isEditMode = Boolean(categoryId);
@@ -14,6 +18,7 @@ const CategoryForm = ({ categoryId }) => {
 
   useEffect(() => {
     if (isEditMode) {
+      setIsFetching(true);
       const loadCategoryData = async () => {
         try {
           const categoryData = await categoryService.getCategoryById(categoryId);
@@ -23,6 +28,8 @@ const CategoryForm = ({ categoryId }) => {
           });
         } catch (error) {
           setApiError("Failed to load category details.");
+        } finally {
+          setIsFetching(false);
         }
       };
       loadCategoryData();
@@ -31,6 +38,7 @@ const CategoryForm = ({ categoryId }) => {
 
   // Handle Form Submission (Create or Update)
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
       if (isEditMode) {
         await categoryService.updateCategory(categoryId, data);
@@ -44,8 +52,9 @@ const CategoryForm = ({ categoryId }) => {
       reset();
       navigate('/admin/categories');
     } catch (error) {
-      console.error("Failed to save category:", error);
-      alert('Error saving category.');
+      setApiError(error.response?.data?.message || "An error occurred while saving the category.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,7 +67,9 @@ const CategoryForm = ({ categoryId }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mb-8">
       <h2 className="text-xl font-semibold mb-4">{isEditMode ? 'Edit Category' : 'Create New Category'}</h2>
+      {apiError && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{apiError}</div>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <fieldset disabled={isFetching || loading} className="space-y-4 disabled:opacity-60 disabled:cursor-not-allowed transition-opacity">
         <div>
           <label className="block text-sm font-medium text-gray-700">Category Name</label>
           <input
@@ -85,18 +96,17 @@ const CategoryForm = ({ categoryId }) => {
             type="submit"
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
           >
-            {isEditMode ? 'Update Category' : 'Save Category'}
+            {loading ? 'Saving...' : isEditMode ? 'Update Category' : 'Save Category'}
           </button>
-          {isEditMode && (
-            <button
+          <button
               type="button"
               onClick={handleCancelEdit}
               className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition"
             >
               Cancel
             </button>
-          )}
         </div>
+        </fieldset>
       </form>
     </div>
   );
